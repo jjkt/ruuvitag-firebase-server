@@ -11,16 +11,51 @@ firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
 
+let lastTimes = new Map();
+
 
 scanner.on('data', function(data) {
+
+if (!ruuvitags.hasOwnProperty(data.beacon))
+{   
+ console.log("data from unknown beacon %s, maybe add it to config?", data.beacon);
+ return;
+}
+
+if (lastTimes.has(data.beacon))
+{
+  if (data.timestamp < (lastTimes.get(data.beacon) + (scannerConfig.interval / 1000)))
+  {
+     return;
+  }
+}
+
+lastTimes.set(data.beacon, data.timestamp);
+
  const date = moment(data.timestamp*1000).utc().format('YYYY-MM-DD');
 
- console.log("%s (%d) beacon=%s (%s), t=%s C, P=%s hPa, r=%s %", moment(data.timestamp * 1000).format('YYYY-MM-DD h:mm:ss'), data.timestamp, ruuvitags[data.beacon].alias, data.beacon, data.temperature, data.pressure, data.humidity);
+ var alias;
+ var hasAlias = false;
+ 
+ if (!ruuvitags[data.beacon].alias)
+ {
+   alias = "unknown";
+ }
+ else
+ {
+  alias = ruuvitags[data.beacon].alias;
+  hasAlias = true;
+  }
+
+ console.log("%s (%d) beacon=%s (%s), t=%s C, P=%s hPa, r=%s %", moment(data.timestamp * 1000).format('YYYY-MM-DD h:mm:ss'), data.timestamp, alias, data.beacon, data.temperature, data.pressure, data.humidity);
 
 /* Save to list of devices the configured alias. */
- database.ref().child('devices').child(data.beacon).set({
+ if (hasAlias)
+{ 
+database.ref().child('devices').child(data.beacon).set({
 	alias : ruuvitags[data.beacon].alias
 	});
+}
 /* Save the measurement result*/
  const measurementRef = database.ref().child('measurements').child(data.beacon).push();
  

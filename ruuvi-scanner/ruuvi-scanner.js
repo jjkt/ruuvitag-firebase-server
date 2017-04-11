@@ -27,7 +27,7 @@ RuuviScanner.prototype.start = function(scannerConfig) {
 RuuviScanner.prototype.parseData = function(beacon) {
 
     const now = Math.floor(Date.now() / 1000);
-    const hash = url.parse(beacon.url).substring(1);
+    const hash = url.parse(beacon.url).hash.substring(1);
     const decoded = Buffer.from(hash, 'base64');
 
     /* Check the format.. only base64 supported nowadays */
