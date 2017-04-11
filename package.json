@@ -1,0 +1,20 @@
+{
+  "name": "ruuvitag-firebase-server",
+  "version": "1.0.0",
+  "description": "RuuviTag data collector for Google Firebase backend",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ruuvitag",
+    "firebase",
+    "ble",
+    "eddystone"
+  ],
+  "author": "Jarmo Torvinen",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^3.7.3"
+  }
+}

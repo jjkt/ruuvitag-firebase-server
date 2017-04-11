@@ -1,0 +1,4 @@
+npm install config
+npm install firebase
+npm install moment
+npm install eddystone-beacon-scanner
