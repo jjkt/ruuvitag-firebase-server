@@ -16,12 +16,6 @@ let lastTimes = new Map();
 
 scanner.on('data', function(data) {
 
-if (!ruuvitags.hasOwnProperty(data.beacon))
-{   
- console.log("data from unknown beacon %s, maybe add it to config?", data.beacon);
- return;
-}
-
 if (lastTimes.has(data.beacon))
 {
   if (data.timestamp < (lastTimes.get(data.beacon) + (scannerConfig.interval / 1000)))
@@ -29,8 +23,15 @@ if (lastTimes.has(data.beacon))
      return;
   }
 }
-
 lastTimes.set(data.beacon, data.timestamp);
+
+if (!ruuvitags.hasOwnProperty(data.beacon))
+{   
+ console.log("data from unknown beacon %s, maybe add it to config?", data.beacon);
+ return;
+}
+
+
 
  const date = moment(data.timestamp*1000).utc().format('YYYY-MM-DD');
 
