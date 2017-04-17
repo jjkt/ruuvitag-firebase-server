@@ -44,6 +44,24 @@ RuuviScanner.prototype.parseData = function (beacon) {
         };
         this.emit('data', data);
     }
+    else if (decoded[0] == 4){
+        const uTemp = ((decoded[2] & 127) << 8) | decoded[3];
+        const tempSign = (decoded[2] >> 7) & 1;
+
+        const data = {
+            beacon: beacon.id,
+            timestamp: now,
+            temperature: tempSign === 0 ? uTemp / 256.0 : -1 * uTemp / 256.0,
+            pressure: (((decoded[4] << 8) + decoded[5]) + 50000) / 100,
+            humidity: decoded[1] * 0.5,
+            tagid: decoded[6]
+        };
+        this.emit('data', data);
+    }
+    else{
+	console.log("got data of format %s", decoded[0]);
+
+	}
 }
 
 RuuviScanner.prototype.beaconFound = function (beacon) {
